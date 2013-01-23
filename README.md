@@ -1,6 +1,6 @@
 Things to implememnt:
 
-project (extractTup);
+project (extractTup); //Zachary
 
 select(evalTup, typeCheck, infix2postfix);
 
