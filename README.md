@@ -2,11 +2,11 @@ Things to implememnt:
 
 project (extractTup); //Zachary
 
-select(evalTup, typeCheck, infix2postfix);
+select(evalTup, infix2postfix); //Ryan
 
-union(compatible, typeCheck?);
+union(typeCheck); //Minh
 
-minus(compatible, typeCheck?);
+minus(compatible); //Nick
 
 compatible;
 
