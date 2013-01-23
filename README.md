@@ -1,12 +1,12 @@
 Things to implememnt:
 
-project;
+project (extractTup);
 
-select;
+select(evalTup, typeCheck, infix2postfix);
 
-union;
+union(compatible, typeCheck?);
 
-minus;
+minus(compatible, typeCheck?);
 
 compatible;
 
