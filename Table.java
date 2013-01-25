@@ -533,19 +533,69 @@ public class Table
      * @param condition  the untokenized infix condition
      * @return  resultant tokenized postfix expression
      */
-    private static String [] infix2postfix (String condition)
+    public static String [] infix2postfix (String condition)
     {
         if (condition == null || condition.trim () == "") return null;
         String [] infix   = condition.split (" ");        // tokenize the infix
         String [] postfix = new String [infix.length];    // same size, since no ( ) 
-
-             //-----------------\\ 
-            // TO BE IMPLEMENTED \\
-           //---------------------\\ 
-
+	Stack ops = new Stack();
+	int j = 0;
+	for(int i = 0; i < infix.length; i++){
+		if(isComparison(infix[i]) || infix[i].equals("&") || infix[i].equals("|")){
+			if(ops.empty()){
+				ops.push(infix[i]);
+			}//if
+			else{
+				while( (ops.empty()==false) && !precedence(infix[i], (String)ops.peek() )){
+					postfix[j] = (String)ops.pop();
+					j++;
+				}//while
+				ops.push(infix[i]);
+			}//else
+		}//if
+		else{
+			postfix[j] = infix[i];
+			j++;		
+		}//else
+	}
+	while(!ops.empty()){
+		postfix[j] = (String)ops.pop();
+		j++;		
+	}
         return postfix;
     } // infix2postfix
-
+	/**
+	* A function to compare the two precedence of two operators 
+	* #usage precedence("==","!=")
+	* @author Ryan Gell
+	* @return true if first has higher precedence thant second
+	*/
+	private static boolean precedence(String first, String second){
+		if(precedenceInt(first) > precedenceInt(second)){
+			return true;
+		}
+		else{return false;}
+	}
+	/**
+	* Returns an int equal to the precedence of the operator
+	* #usage precedenceInt("==")
+	* @author Ryan Gell
+	* @return int between 8 and 0
+	*/
+	private static int precedenceInt(String x){
+		int temp;
+		switch(x){
+			case "==": temp = 8; break;
+			case "!=": temp = 7; break;
+			case "<": temp = 6; break;
+			case "<=": temp = 5; break;
+			case ">": temp = 4; break;
+			case ">=": temp = 3; break;
+			case "&": temp = 2; break;
+			case "|": temp = 1; break;
+		default: temp = 0;}
+		return temp;
+	}
     /***************************************************************************
      * Find the classes in the "java.lang" package with given names.
      * @param className  the array of class name (e.g., {"Integer", "String"})
