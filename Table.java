@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * @file  Table.java
  *
@@ -240,6 +239,45 @@ public class Table
     {
         return name;
     } // getName
+    
+    /***************************************************************************
+     * Get the attribute at the indexed column of the table
+     * @param index  the index number of the array item you want to access
+     * @return  the attribute at the given index
+     * @author  Nicholas Sobrilsky
+     */
+    private String getAttributeAt(int index)
+    {
+        return attribute[index];
+    } //getAttributeAt
+    
+     /***************************************************************************
+     * Get the domain (class) at the indexed column of the table
+     * @param index  the index number of the array item you want to access
+     * @return  the domain (class) at the given index
+     * @author  Nicholas Sobrilsky
+     */
+    private Class getDomainAt(int index){
+	 return domain[index];
+    } //getDomainAt
+    
+     /***************************************************************************
+     * Get the length of the attribute array of the table
+     * @return  the length of the attribute array
+     * @author  Nicholas Sobrilsky
+     */
+    private int getAttributeLength(){
+	 return attribute.length;
+    } //getAttributeArray
+    
+     /***************************************************************************
+     * Get the length of the domain array of the table
+     * @return  the length of the domain array
+     * @author  Nicholas Sobrilsky
+     */
+    private int getDomainLength(){
+	 return domain.length;
+    } //getDomainLength
 
     /***************************************************************************
      * Print the table.
@@ -282,14 +320,24 @@ public class Table
      * have the same number of attributes each with the same corresponding domain.
      * @param table2  the rhs table
      * @return  whether the two tables are compatible
+     * @author  Nicholas Sobrilsky
      */
     private boolean compatible (Table table2)
     {
-             //-----------------\\ 
-            // TO BE IMPLEMENTED \\
-           //---------------------\\ 
-
-        return false;
+        if ( this.getAttributeLength()!=table2.getAttributeLength() ){
+              return false;
+        }
+        for( int i=0; i<this.getDomainLength(); i++ ){
+	    for( int j=0; j<table2.getDomainLength(); j++ ){
+	       if ( this.getDomainAt(i)==table2.getDomainAt(j) && this.getAttributeAt(i)==table2.getAttributeAt(j) ){
+		       break; //Watch to make sure this isn't breaking out of both loops
+		   }
+              else if ( j==table2.getDomainLength()-1 ){
+			return false;
+		   }
+	    }
+        }
+        return true;
     } // compatible
 
     /***************************************************************************
