@@ -132,8 +132,8 @@ public class Table
     {
         out.println ("RA> " + name + ".select (" + condition + ")");
 
-        String [] postfix = { "title", "Star_Wars", "==" };      // FIX: delete after impl
-//      String [] postfix = infix2postfix (condition);           // FIX: uncomment after impl
+       String [] postfix = infix2postfix (condition);           // FIX: uncomment after impl
+	System.out.println(Arrays.toString(postfix));
         Table     result  = new Table (name + count++, attribute, domain, key);
 
         for (Comparable [] tup : tuples) {
@@ -372,7 +372,7 @@ public class Table
 
     /***************************************************************************
      * Check whether the tuple satisfies the condition.  Use a stack-based postfix
-     * expression evaluation algorithm.
+     * expression evaluation algorithm.evalTup
      * @param postfix  the postfix expression for the condition
      * @param tup      the tuple to check
      * @return  whether to keep the tuple
@@ -411,8 +411,8 @@ public class Table
 			s.push(token);		
 		}
         } // for		
-//      return (Boolean) s.pop ();         // FIX: uncomment after loop impl
-        return true;                       // FIX: delete after loop impl
+        return (Boolean) s.pop ();         // FIX: uncomment after loop impl
+
     	} // evalTup	
 	private boolean inAttribute(String s){
 		for(int i = 0; i < attribute.length; i++){
@@ -592,7 +592,10 @@ public class Table
 			}//else
 		}//if
 		else{
-			postfix[j] = infix[i];
+			if(infix[i].charAt(0) == '\''){
+				postfix[j] = infix[i].substring(1,(infix[i].length())-1);}
+			else{
+			postfix[j] = infix[i];}
 			j++;		
 		}//else
 	}
