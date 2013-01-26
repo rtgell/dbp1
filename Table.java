@@ -208,8 +208,7 @@ public class Table
 
         return result;
     } // join
-
-    /***************************************************************************
+/***************************************************************************
      * Insert a tuple to the table.
      * #usage movie.insert ("'Star_Wars'", 1977, 124, "T", "Fox", 12345)
      * @param tup  the array of attribute values forming the tuple
@@ -385,17 +384,56 @@ public class Table
         Stack <Comparable <?>> s = new Stack <> ();
 
         for (String token : postfix) {
-
-             //-----------------\\ 
-            // TO BE IMPLEMENTED \\
-           //---------------------\\ 
-
-        } // for
-
+		if(isComparison(token)){
+			String one = (String)s.pop();
+			String two = (String)s.pop();
+			if(inAttribute(one)){
+				int pos = attributeIndex(one);
+				s.push(compare(tup[pos],token,String2Type.cons(domain[pos],two)));
+			}
+			else{
+				int pos = attributeIndex(two);
+				s.push(compare(String2Type.cons(domain[pos],one),token,tup[pos]));
+			}
+			
+		}
+		else if(token.equals("|")){
+			Boolean	one = (Boolean)s.pop();
+			Boolean two = (Boolean)s.pop();
+			s.push(one||two);
+		}
+		else if(token.equals("&")){
+			Boolean	one = (Boolean)s.pop();
+			Boolean two = (Boolean)s.pop();
+			s.push(one&&two);
+		}
+		else{
+			s.push(token);		
+		}
+        } // for		
 //      return (Boolean) s.pop ();         // FIX: uncomment after loop impl
         return true;                       // FIX: delete after loop impl
-    } // evalTup
-
+    	} // evalTup	
+	private boolean inAttribute(String s){
+		for(int i = 0; i < attribute.length; i++){
+			if(attribute[i].toLowerCase().equals(s) ) return true;
+		}//for
+		return false;
+	}//inAttribute
+	private int attributeIndex(String s){
+		if(inAttribute(s)){
+			for(int i = 0; i < attribute.length; i++){
+				if(s.equals(attribute[i])) return i;
+			}//for
+		}//if
+		return -1;
+	}//attributeIndex
+	private Comparable getValueAt(int index, Comparable [] tup){
+		return tup[index];	
+	}//getValueAt
+	private Comparable getValueOf(String key, Comparable[] tup){
+		return getValueAt(attributeIndex(key), tup);	
+	}//getValueOf
     /***************************************************************************
      * Pack tuple tup into a record/byte-buffer (array of bytes).
      * @param tup  the array of attribute values forming the tuple
@@ -627,7 +665,7 @@ public class Table
         Class [] dom = new Class [colPos.length];
 
         for (int j = 0; j < colPos.length; j++) {
-            dom [j] = group [colPos [j]];
+            dom [j] = group[colPos [j]];
         } // for
 
         return dom;
