@@ -422,8 +422,16 @@ public class Table
 		}//if
 		//if we have an 'or' we need to pop two booleans and push them or'd
 		else if(token.equals("|")){
+			if(!(s.peek() instanceof Boolean)){
+				System.out.println("Input to Select ill-formed");
+				System.exit(0);
+			}
 			Boolean	one = (Boolean)s.pop();
-			Boolean two = (Boolean)s.pop();
+			if(!(s.peek() instanceof Boolean)){
+				System.out.println("Input to Select ill-formed");
+				System.exit(0);
+			}
+			Boolean two = (Boolean)s.pop();	
 			s.push(one||two);
 		}//else if
 		//if we have an 'or' we need to pop two booleans and push them or'd
@@ -435,8 +443,12 @@ public class Table
 		//Otherwise we just have a string token, so we push it into the stack
 		else{
 			s.push(token);		
-		}//else
+		}//elses
         } // for		
+	if(!(s.peek() instanceof Boolean)){
+		System.out.println("Input to Select ill-formed");
+		System.exit(0);
+	}
 	//Return the last Boolean in the stack, e.g. the answer
         return (Boolean) s.pop ();
     	} // evalTup
@@ -631,6 +643,7 @@ public class Table
      * @return  resultant tokenized postfix expression
      * @author Ryan Gell
      */
+    @SuppressWarnings("unchecked")
     public static String [] infix2postfix (String condition)
     {
         if (condition == null || condition.trim () == "") return null;
