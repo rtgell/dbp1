@@ -165,7 +165,7 @@ public class Table
         int length2 = table2.tuples.size();
         for (int i=0; i< length2; i++){
         	int j=0;
-        	while(j<length1 && table2.tuples.get(i)!=this.tuples.get(j)){
+        	while(j<length1 && !isEqual(this.tuples.get(j), table2.tuples.get(i)) ){
         		j++;
         	}
         	if (j==length1){
@@ -189,9 +189,19 @@ public class Table
 
         Table result = new Table (name + count++, attribute, domain, key);
 
-             //-----------------\\ 
-            // TO BE IMPLEMENTED \\
-           //---------------------\\ 
+	if (!this.compatible(table2)){
+        	return result;
+        }
+        
+        for(int i=0; i<this.tuples.size(); i++){
+        	int j=0;
+        	while(j<table2.tuples.size() && !isEqual(this.tuples.get(i),table2.tuples.get(j))){
+        		j++;
+        	}
+        	if(j==table2.tuples.size()){
+        		result.tuples.add(this.tuples.get(i));
+        	}	
+        }
 
         return result;
     } // minus
@@ -767,6 +777,18 @@ public class Table
 
         return tup;
     } // extractTup
+
+    private static boolean isEqual(Comparable[] table1, Comparable[] table2){
+    	int size = table1.length;
+    	int i=0;
+    	while(i<size && table1[i].compareTo(table2[i])==0){
+    		i++;
+    	}
+    	if(i==size){
+    		return true;
+    	}
+    	return false;
+    }
 
 } // Table class
 
