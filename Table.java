@@ -126,7 +126,8 @@ public class Table
      *   2 Boolean operators:    "&", "|"  (from high to low precedence)
      * #usage movie.select ("1979 < year & year < 1990")
      * @param condition  the check condition for tuples
-     * @return  the table consisting of tuples satisfying the condition
+     * @return the table consisting of tuples satisfying the condition
+     * @author Ryan Gell
      */
     public Table select (String condition)
     {
@@ -154,10 +155,6 @@ public class Table
         out.println ("RA> " + name + ".union (" + table2.name + ")");
 
         Table result = new Table (name + count++, attribute, domain, key);
-
-             //-----------------\\ 
-            // TO BE IMPLEMENTED \\
-           //---------------------\\ 
         if (!this.compatible(table2)){
         	return result;
         }
@@ -392,62 +389,100 @@ public class Table
      * expression evaluation algorithm.evalTup
      * @param postfix  the postfix expression for the condition
      * @param tup      the tuple to check
-     * @return  whether to keep the tuple
+     * @return whether to keep the tuple
+     * @author Ryan Gell
      */
     @SuppressWarnings("unchecked")
     private boolean evalTup (String [] postfix, Comparable [] tup)
     {
         if (postfix == null) return true;
         Stack <Comparable <?>> s = new Stack <> ();
-
+	//stack-based postfix evaluation
         for (String token : postfix) {
+	//if it is a comparison operator, we need to pop two strings
 		if(isComparison(token)){
 			String one = (String)s.pop();
 			String two = (String)s.pop();
+		//if the first string is an attribute
 			if(inAttribute(one)){
+		//we get where the attribute is in the database domain
 				int pos = attributeIndex(one);
+		//we turn the string into a type and grab the attribute from the tup 
 				s.push(compare(tup[pos],token,String2Type.cons(domain[pos],two)));
-			}
-			else{
+			}//if
+		//As above but with second string
+			else if (inAttribute(two)){
 				int pos = attributeIndex(two);
 				s.push(compare(String2Type.cons(domain[pos],one),token,tup[pos]));
-			}
+			}//else if
+		//If there was no attribute in the operation string, exit as the
+		//Formula is ill formed
+			else{System.out.println("Select string is ill-formed");System.exit(0);}//else
 			
-		}
+		}//if
+		//if we have an 'or' we need to pop two booleans and push them or'd
 		else if(token.equals("|")){
 			Boolean	one = (Boolean)s.pop();
 			Boolean two = (Boolean)s.pop();
 			s.push(one||two);
-		}
+		}//else if
+		//if we have an 'or' we need to pop two booleans and push them or'd
 		else if(token.equals("&")){
 			Boolean	one = (Boolean)s.pop();
 			Boolean two = (Boolean)s.pop();
 			s.push(one&&two);
-		}
+		}//else if
+		//Otherwise we just have a string token, so we push it into the stack
 		else{
 			s.push(token);		
-		}
+		}//else
         } // for		
-        return (Boolean) s.pop ();         // FIX: uncomment after loop impl
-
-    	} // evalTup	
+	//Return the last Boolean in the stack, e.g. the answer
+        return (Boolean) s.pop ();
+    	} // evalTup
+     /**
+     * Check if the string is an attribute in the database
+     * @param s  the string we want to check
+     * @return if the string is in attribute
+     * @author Ryan Gell
+     */	
 	private boolean inAttribute(String s){
 		for(int i = 0; i < attribute.length; i++){
-			if(attribute[i].toLowerCase().equals(s) ) return true;
+			if(attribute[i].toLowerCase().equals(s.toLowerCase()) ) return true;
 		}//for
 		return false;
 	}//inAttribute
+     /**
+     * Find where a given attribute is in the attribute list
+     * @param s  the string we want to find
+     * @return the index of the string or -1 if it's not present
+     * @author Ryan Gell
+     */	
 	private int attributeIndex(String s){
 		if(inAttribute(s)){
 			for(int i = 0; i < attribute.length; i++){
-				if(s.equals(attribute[i])) return i;
+				if(s.toLowerCase().equals(attribute[i]).toLowerCase()) return i;
 			}//for
 		}//if
 		return -1;
 	}//attributeIndex
+     /**
+     * Returns the value of a certain index of a tup
+     * @param index  the index we want to access
+     * @param tup    the tup we want to access
+     * @return the value at that index
+     * @author Ryan Gell
+     */	
 	private Comparable getValueAt(int index, Comparable [] tup){
 		return tup[index];	
 	}//getValueAt
+     /**
+     * Returns the value of a certain attribute in a tup
+     * @param key  the name of the attribute we want to access
+     * @param tup    the tup we want to access
+     * @return the value at that index
+     * @author Ryan Gell
+     */	
 	private Comparable getValueOf(String key, Comparable[] tup){
 		return getValueAt(attributeIndex(key), tup);	
 	}//getValueOf
@@ -541,10 +576,6 @@ public class Table
      */
     private static boolean typeCheck (Comparable [] tup, Class [] dom)
     { 
-             //-----------------\\ 
-            // TO BE IMPLEMENTED \\
-           //---------------------\\ 
-
     	if(tup.length!=dom.length){
     		return false;
     	}
@@ -597,39 +628,44 @@ public class Table
      * Ex: "1979 < year & year < 1990" --> { "1979", "year", "<", "year", "1990", "<", "&" } 
      * @param condition  the untokenized infix condition
      * @return  resultant tokenized postfix expression
+     * @author Ryan Gell
      */
     public static String [] infix2postfix (String condition)
     {
         if (condition == null || condition.trim () == "") return null;
         String [] infix   = condition.split (" ");        // tokenize the infix
         String [] postfix = new String [infix.length];    // same size, since no ( ) 
+	//Stack for stack-based implementation	
 	Stack ops = new Stack();
+	//j follows where we are in postfix
 	int j = 0;
 	for(int i = 0; i < infix.length; i++){
+		//If we have an operator (rather than a token)
 		if(isComparison(infix[i]) || infix[i].equals("&") || infix[i].equals("|")){
-			if(ops.empty()){
+			if(ops.empty()){//if our stack is empty push
 				ops.push(infix[i]);
 			}//if
 			else{
-				while( (ops.empty()==false) && !precedence(infix[i], (String)ops.peek() )){
-					postfix[j] = (String)ops.pop();
+				while( (ops.empty()==false) && !precedence(infix[i], (String)ops.peek() )){//As long as the stack isn't empty and the operator we're looking at
+				//Has higher precedence
+					postfix[j] = (String)ops.pop();//Take the top operator
 					j++;
 				}//while
-				ops.push(infix[i]);
+				ops.push(infix[i]);//Then push the one we're looking at
 			}//else
 		}//if
 		else{
-			if(infix[i].charAt(0) == '\''){
-				postfix[j] = infix[i].substring(1,(infix[i].length())-1);}
+			if(infix[i].charAt(0) == '\''){//If our term is in quotes
+				postfix[j] = infix[i].substring(1,(infix[i].length())-1);}//Remove the quotes
 			else{
-			postfix[j] = infix[i];}
+			postfix[j] = infix[i];}//And but them in postfix
 			j++;		
 		}//else
 	}
-	while(!ops.empty()){
+	while(!ops.empty()){//Pop the remaining 
 		postfix[j] = (String)ops.pop();
 		j++;		
-	}
+	}//while
         return postfix;
     } // infix2postfix
 	/**
@@ -643,7 +679,7 @@ public class Table
 			return true;
 		}
 		else{return false;}
-	}
+	}//precedence
 	/**
 	* Returns an int equal to the precedence of the operator
 	* #usage precedenceInt("==")
