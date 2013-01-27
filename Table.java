@@ -461,7 +461,8 @@ public class Table
 	private int attributeIndex(String s){
 		if(inAttribute(s)){
 			for(int i = 0; i < attribute.length; i++){
-				if(s.toLowerCase().equals(attribute[i]).toLowerCase()) return i;
+				if( s.toLowerCase().equals(attribute[i].toLowerCase()) )
+					return i;
 			}//for
 		}//if
 		return -1;
