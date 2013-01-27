@@ -350,17 +350,16 @@ public class Table
         if ( this.getAttributeLength()!=table2.getAttributeLength() ){
               return false;
         }
-        for( int i=0; i<this.getDomainLength(); i++ ){
-	    for( int j=0; j<table2.getDomainLength(); j++ ){
-	       if ( this.getDomainAt(i)==table2.getDomainAt(j) && this.getAttributeAt(i)==table2.getAttributeAt(j) ){
-		       break; //Watch to make sure this isn't breaking out of both loops
-		   }
-              else if ( j==table2.getDomainLength()-1 ){
-			return false;
-		   }
-	    }
+        
+        int i=0;
+        while(i<this.getDomainLength() && this.getAttributeAt(i).compareToIgnoreCase(table2.getAttributeAt(i))==0 && this.getDomainAt(i).getName().compareToIgnoreCase(table2.getDomainAt(i).getName())==0){
+        	i++;
         }
-        return true;
+        if(i==this.getDomainLength()){
+        	return true;
+        }
+        return false;
+        
     } // compatible
 
     /***************************************************************************
