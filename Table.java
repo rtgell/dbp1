@@ -770,9 +770,9 @@ public class Table
     {
         Comparable [] tup = new Comparable [colPos.length];
 
-             //-----------------\\ 
-            // TO BE IMPLEMENTED \\
-           //---------------------\\ 
+        for (int i=0; i<tup.length; i++){
+        	tup[i]=group[colPos[i]];
+        }
 
         return tup;
     } // extractTup
