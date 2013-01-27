@@ -158,6 +158,23 @@ public class Table
              //-----------------\\ 
             // TO BE IMPLEMENTED \\
            //---------------------\\ 
+        if (!this.compatible(table2)){
+        	return result;
+        }
+        int length1 = this.tuples.size();
+        for(int i=0; i< length1; i++){
+        	result.tuples.add(this.tuples.get(i));
+        }
+        int length2 = table2.tuples.size();
+        for (int i=0; i< length2; i++){
+        	int j=0;
+        	while(j<length1 && table2.tuples.get(i)!=this.tuples.get(j)){
+        		j++;
+        	}
+        	if (j==length1){
+        		result.tuples.add(table2.tuples.get(i));
+        	}
+        }
 
         return result;
     } // union
@@ -527,6 +544,16 @@ public class Table
              //-----------------\\ 
             // TO BE IMPLEMENTED \\
            //---------------------\\ 
+
+    	if(tup.length!=dom.length){
+    		return false;
+    	}
+    	int length = tup.length;
+    	for(int i=0; i< length; i++){
+    		if(tup[i].getClass().getName()!=dom[i].getName()){
+    			return false;
+    		}
+    	}
 
         return true;
     } // typeCheck
