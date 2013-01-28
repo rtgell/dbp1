@@ -101,6 +101,7 @@ public class Table
      * #usage movie.project ("title year studioNo")
      * @param attributeList  the attributes to project onto
      * @return  the table consisting of projected tuples
+     * @author Zachary Freeland
      */
     public Table project (String attributeList)
     {
@@ -109,7 +110,33 @@ public class Table
         String [] pAttribute = attributeList.split (" ");
         int []    colPos     = match (pAttribute);
         Class []  colDomain  = extractDom (domain, colPos);
-        String [] newKey     = null;    // FIX: original key if included, otherwise all atributes
+        
+        //prepare to test if keys are present                                                                                                                            
+        int []    keyPos     = match (key); //find keys in columns                                                                                                       
+        boolean   keysPres   = true; //no keys are missing yet                                                                                                           
+
+        //outer loop iterates over key locations, ending if one is missed                                                                                             
+        for(int i = 0; ( (i < keyPos.length) && keysPres ); i++){
+            boolean currKeyFound = false; //set to true when found                                                                                                       
+
+            //inner loop iterates over projected attribute columns in initial table, ending early if current key column is found                  
+            for(int j = 0; ( (j < colPos.length) && !currKeyFound ); j++){
+                if( keyPos [i] == colPos [j] ){
+                    currKeyFound = true;
+                }//if
+            }//for
+            if(!currKeyFound){
+                keysPres = false;
+            }//if
+        }//for
+
+        String [] newKey     = null;
+        if (keysPres)
+            newKey = key; //original key if all included                                                                                                                 
+        else
+            newKey = pAttribute; //all attributes if not                                                                                                                 
+
+
         Table     result     = new Table (name + count++, pAttribute, colDomain, newKey);
 
         for (Comparable [] tup : tuples) {
