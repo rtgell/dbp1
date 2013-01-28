@@ -176,6 +176,7 @@ public class Table
      * #usage movie.union (show)
      * @param table2  the rhs table in the union operation
      * @return  the table representing the union (this U table2)
+     * @author minh pham
      */
     public Table union (Table table2)
     {
@@ -623,6 +624,7 @@ public class Table
      * @param dom  the domains (attribute types)
      * @return  whether the tuple has the right size and values that comply
      *          with the given domains
+     * @author minh pham
      */
     private static boolean typeCheck (Comparable [] tup, Class [] dom)
     { 
