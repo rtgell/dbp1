@@ -182,6 +182,7 @@ public class Table
      * #usage movie.minus (show)
      * @param table2  the rhs table in the minus operation
      * @return  the table representing the difference (this - table2)
+     * @author: Nicholas Sobrilsky
      */
     public Table minus (Table table2)
     {
@@ -189,19 +190,19 @@ public class Table
 
         Table result = new Table (name + count++, attribute, domain, key);
 
-	if (!this.compatible(table2)){
-        	return result;
-        }
-        
-        for(int i=0; i<this.tuples.size(); i++){
-        	int j=0;
-        	while(j<table2.tuples.size() && !isEqual(this.tuples.get(i),table2.tuples.get(j))){
-        		j++;
-        	}
-        	if(j==table2.tuples.size()){
-        		result.tuples.add(this.tuples.get(i));
-        	}	
-        }
+	if ( !this.compatible(table2) ){
+	    System.err.println("Error: Tables not compatible. " + name + " returned.");
+	} else{
+	    for ( int i=0; i<this.tuples.size(); i++ ){
+	        for ( int j=0; j<table2.tuples.size(); j++ ){
+		    if (this.tuples.get(i)==table2.tuples.get(j)){
+		        break;
+		    } else if ( j==table2.tuples.size()-1 ){
+		        result.tuples.add( this.tuples.get(i) );
+		    }
+		}
+	    }
+	}
 
         return result;
     } // minus
